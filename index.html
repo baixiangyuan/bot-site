@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>bilibili_learning_bot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        :root {
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F5F5F5;
+            --bg-card: #FAFAFA;
+            --text-primary: #0D0D0D;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
+            --accent: #D97757;
+            --border: #E5E5E5;
+        }
+        [data-theme="dark"] {
+            --bg-primary: #0D0D0D;
+            --bg-secondary: #1A1A1A;
+            --bg-card: #141414;
+            --text-primary: #F5F5F5;
+            --text-secondary: #999999;
+            --accent: #E8916A;
+            --border: #2A2A2A;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-primary); color: var(--text-primary); transition: 0.4s; line-height: 1.6; padding: 120px 24px; max-width: 800px; margin: 0 auto; }
+        h1 { font-size: 64px; font-weight: 200; letter-spacing: -2px; margin-bottom: 24px; }
+        p { font-size: 20px; font-weight: 300; color: var(--text-secondary); margin-bottom: 40px; }
+        .btn-primary { background: var(--text-primary); color: var(--bg-primary); padding: 12px 28px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+        .card { background: var(--bg-card); border: 1px solid var(--border); padding: 36px; border-radius: 14px; margin-top: 40px; }
+        pre { background: var(--bg-secondary); padding: 20px; border-radius: 8px; overflow-x: auto; margin: 20px 0; }
+        .theme-toggle { position: fixed; top: 20px; right: 24px; cursor: pointer; background: var(--bg-secondary); border: 1px solid var(--border); padding: 8px; border-radius: 50%; }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <i data-lucide="moon" id="themeIcon"></i>
+    </button>
+    <h1>bilibili_learning_bot<span style="color:var(--accent);">.</span></h1>
+    <p>自动化 B 站学习与互动辅助程序，基于本地脚本与大型语言模型。</p>
+    <a href="https://github.com/xiaoyaya191/bilibili_learning_bot" class="btn-primary">GitHub <i data-lucide="arrow-right" style="width:16px;"></i></a>
+    
+    <div class="card">
+        <h3>快速开始</h3>
+        <pre><code>git clone https://github.com/xiaoyaya191/bilibili_learning_bot.git
+cd bilibili_learning_bot
+pip install -r requirements.txt
+python new_agent.py</code></pre>
+    </div>
+
+    <script>
+        let isDark = false;
+        function toggleTheme() {
+            isDark = !isDark;
+            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            document.getElementById('themeIcon').setAttribute('data-lucide', isDark ? 'sun' : 'moon');
+            lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+        }
+        lucide.createIcons({ attrs: { 'stroke-width': 1.5 } });
+    </script>
+</body>
+</html>
