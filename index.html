@@ -5,35 +5,811 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
     <title>bilibili_learning_bot · AI 学习互动机器人</title>
     <meta name="description" content="全自动 B 站 AI 学习互动机器人，支持 Linux/Windows/Android/Docker 部署。AI 自动刷 B 站、智能互动、构建知识库。">
+    <script charset="UTF-8" id="LA_COLLECT" src="//sdk.51.la/js-sdk-pro.min.js"></script>
+    <script>LA.init({id:"3QFckgiZTB513DZG",ck:"3QFckgiZTB513DZG",autoTrack:true,hashMode:true,screenRecord:true})</script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; background: #faf8f6; color: #3c353d; line-height: 1.6; }
-        .landing { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 2rem; }
-        .landing-logo { font-size: 3.5rem; margin-bottom: 1.5rem; color: #ff70a6; }
-        .landing-title { font-size: 2.8rem; font-weight: 800; color: #2b252c; margin-bottom: 1rem; }
-        .btn-large { padding: 0.8rem 2.2rem; font-weight: 600; border-radius: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; transition: 0.2s; }
-        .btn-primary { background: #ff70a6; color: white; }
-        .btn-ghost { background: #ffffff; border: 1px solid #e3dcdb; color: #524654; }
-        .docs-container { max-width: 1140px; margin: 0 auto; padding: 2.5rem 1.5rem; }
-        .sidebar { width: 240px; position: sticky; top: 2rem; }
-        .card { background: #ffffff; border: 1px solid #ebdbe9; border-radius: 16px; padding: 2.2rem; margin-bottom: 2rem; }
-        .code-block { background: #1e191f; border-radius: 10px; padding: 1.2rem; color: #e6e1e7; overflow-x: auto; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #faf8f6; /* 温润柔和的浅米色背景 */
+            color: #3c353d;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+        
+        /* 欢迎首页 Landing Section */
+        .landing {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        .landing-logo { 
+            font-size: 3.5rem; 
+            margin-bottom: 1.5rem; 
+            color: #ff70a6;
+        }
+        .landing-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #2b252c;
+            margin-bottom: 1rem;
+            letter-spacing: -0.01em;
+        }
+        .landing-desc {
+            color: #6e6470;
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            font-size: 1.05rem;
+        }
+        .btn-group {
+            display: flex;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 2.5rem;
+        }
+        .btn-large {
+            padding: 0.8rem 2.2rem;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .btn-primary {
+            background: #ff70a6;
+            color: white;
+            border: none;
+        }
+        .btn-primary:hover { 
+            background: #ff5292;
+            transform: translateY(-1px);
+        }
+        .btn-ghost {
+            background: #ffffff;
+            border: 1px solid #e3dcdb;
+            color: #524654;
+        }
+        .btn-ghost:hover { 
+            background: #f7f3f2;
+            transform: translateY(-1px);
+        }
+        .warning-note {
+            background: #fff9e6;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            color: #8a6d1c;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* 文档主容器 */
+        .docs-container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 2.5rem 1.5rem;
+            display: none;
+        }
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid #e8e1e0;
+            margin-bottom: 2rem;
+        }
+        .back-home {
+            background: transparent;
+            border: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: #ff70a6;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: color 0.15s;
+        }
+        .back-home:hover { color: #d6467d; }
+        
+        .docs-layout {
+            display: flex;
+            gap: 3rem;
+        }
+        
+        /* 侧边栏目录 */
+        .sidebar {
+            width: 240px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 2rem;
+            align-self: start;
+            padding-right: 1rem;
+        }
+        .sidebar h4 {
+            font-size: 0.78rem;
+            color: #9c8e8d;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 1rem;
+            padding-left: 0.6rem;
+        }
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .sidebar-nav a {
+            color: #665b68;
+            text-decoration: none;
+            padding: 0.55rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .sidebar-nav a i {
+            width: 16px;
+            text-align: center;
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+        .sidebar-nav a:hover, .sidebar-nav a.active {
+            background: #fff0f4;
+            color: #ff70a6;
+        }
+        
+        /* 主内容卡片 */
+        .main-content {
+            flex: 1;
+            min-width: 0;
+        }
+        .card {
+            background: #ffffff;
+            border: 1px solid #ebdbe9;
+            border-radius: 16px;
+            padding: 2.2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(140, 119, 126, 0.03);
+        }
+        .card h2 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #2b252c;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .card h2 i { color: #ff70a6; font-size: 1.15rem; }
+        .card h3 {
+            font-size: 1.05rem;
+            margin: 1.6rem 0 0.8rem;
+            color: #443a45;
+            position: relative;
+            display: inline-block;
+        }
+        /* 浅色高亮强调，具有呼吸感 */
+        .card h3::after {
+            content: '';
+            position: absolute;
+            bottom: 1px;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 112, 166, 0.12);
+            z-index: 1;
+        }
+        .card p {
+            color: #574d59;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+        }
+        
+        /* 个人画像简介区域 */
+        .intro-container {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+        .intro-main-text { flex: 1; min-width: 280px; }
+        .character-card {
+            width: 220px;
+            background: #faf8f9;
+            border: 1px solid #ebdbe9;
+            border-radius: 12px;
+            padding: 1.2rem;
+        }
+        .character-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: #fff0f4;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: #ff70a6;
+        }
+        .char-prop { font-size: 0.85rem; color: #665b68; margin-bottom: 0.4rem; display: flex; justify-content: space-between; }
+        .char-stat-bar { height: 6px; background: #ebdbe0; border-radius: 10px; overflow: hidden; margin-top: 0.2rem; }
+        .char-stat-fill { height: 100%; background: #ff70a6; }
+
+        /* 代码块样式 */
+        .code-block-wrapper {
+            position: relative;
+            margin: 1rem 0;
+        }
+        .code-block {
+            background: #1e191f; /* 低饱和度暗色调 */
+            border-radius: 10px;
+            padding: 1.2rem 3.5rem 1.2rem 1.2rem;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.88rem;
+            overflow-x: auto;
+            color: #e6e1e7;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: #bfaec2;
+            border: none;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.18);
+            color: #ffffff;
+        }
+
+        /* 优雅的折叠时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 1.5rem;
+            border-left: 1px solid #ebdbe9;
+            margin-top: 1.5rem;
+        }
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1rem;
+            background: white;
+            border: 1px solid #ebdbe9;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1.82rem;
+            top: 1.15rem;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #c7b3c4;
+            border: 2px solid #faf8f6;
+            z-index: 2;
+        }
+        .timeline-item.latest::before { background: #ff70a6; }
+        
+        .timeline-toggle-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.2rem;
+            cursor: pointer;
+            user-select: none;
+            background: #fffcfd;
+        }
+        .timeline-header-left { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+        .version-tag { font-weight: 600; color: #2b252c; font-size: 0.95rem; }
+        .version-date { font-size: 0.82rem; color: #8c7e8d; }
+        .badge-latest {
+            background: #fff0f4;
+            color: #ff70a6;
+            padding: 0.05rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 600;
+        }
+        .fold-icon { font-size: 0.75rem; color: #8c7e8d; }
+        
+        .changelog-body-wrapper {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.25s ease-out;
+            background: #ffffff;
+        }
+        .changelog-detail {
+            padding: 1.2rem;
+            font-size: 0.88rem;
+            color: #574d59;
+            border-top: 1px solid #ebdbe9;
+        }
+        .timeline-item.active .changelog-body-wrapper { max-height: 2000px; }
+
+        /* 更新日志内部排版 */
+        .changelog-detail p { margin-bottom: 0.4rem; }
+        .changelog-detail h3 { font-size: 0.92rem; color: #2b252c; margin: 0.6rem 0 0.3rem; font-weight: 600; }
+        .changelog-detail h3::after { display: none; }
+        .changelog-detail ul { padding-left: 1.1rem; margin: 0.3rem 0 0.6rem; }
+        .changelog-detail li { margin-bottom: 0.25rem; list-style-type: disc; }
+        .changelog-detail code { background: #faf3f5; padding: 0.1rem 0.3rem; border-radius: 4px; font-family: monospace; color: #ff70a6; font-size: 0.8rem; margin: 0 0.1rem; }
+        .changelog-detail blockquote { border-left: 3px solid #ff70a6; padding-left: 0.6rem; color: #786b7a; margin: 0.4rem 0; }
+
+        /* 部署网格 */
+        .deploy-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.2rem; margin-top: 1rem; }
+        .deploy-card { background: #faf8f9; border: 1px solid #ebdbe9; border-radius: 12px; padding: 1.2rem; }
+        .deploy-card h4 { font-size: 0.95rem; margin-bottom: 0.5rem; color: #4361ee; display: flex; align-items: center; gap: 0.4rem; }
+        .deploy-card h4.android-title { color: #2a9d8f; } /* 安卓专属优雅色调 */
+        
+        /* 栅格特征 */
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+        .feature-grid > div { background: #ffffff; padding: 1rem; border-radius: 10px; border: 1px solid #ebdbe9; }
+        .feature-grid i { color: #ff70a6; margin-right: 0.3rem; }
+        
+        /* 数据表格 */
+        .table-wrapper { overflow-x: auto; margin: 1rem 0; border: 1px solid #ebdbe9; border-radius: 10px; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { padding: 0.75rem 1rem; border-bottom: 1px solid #ebdbe9; text-align: left; font-size: 0.88rem; }
+        th { background: #fffcfd; color: #2b252c; font-weight: 600; border-bottom: 1px solid #ebdbe9; }
+        
+        /* 右下角置顶按钮 */
+        .back-to-sidebar-btn {
+            position: fixed;
+            bottom: 2.5rem;
+            right: 2.5rem;
+            background: #ffffff;
+            color: #665b68;
+            border: 1px solid #ebdbe9;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 999;
+        }
+        .back-to-sidebar-btn.show { opacity: 1; visibility: visible; }
+        .back-to-sidebar-btn:hover { color: #ff70a6; background: #fffbfd; }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 2.5rem 0;
+            color: #8c7e8d;
+            font-size: 0.82rem;
+            border-top: 1px dashed #ebdbe9;
+            margin-top: 2.5rem;
+        }
+        .badge-link-group {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-top: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .badge-link-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: white;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            border: 1px solid #ebdbe9;
+            font-size: 0.75rem;
+            color: #665b68;
+            text-decoration: none;
+            transition: all 0.15s;
+        }
+        .badge-link-item:hover { border-color: #ff70a6; color: #ff70a6; }
+
+        @media (max-width: 800px) {
+            .docs-layout { flex-direction: column; gap: 1.5rem; }
+            .sidebar { width: 100%; position: static; padding-right: 0; }
+            .card { padding: 1.5rem; }
+        }
+        kbd {
+            background: #fff0f4;
+            color: #ff70a6;
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            border: 1px solid #ebdbe9;
+        }
     </style>
 </head>
 <body>
     <div id="landingPage" class="landing">
         <div class="landing-logo"><i class="fa-solid fa-paw"></i></div>
         <h1 class="landing-title">bilibili_learning_bot</h1>
-        <p>全自动 AI 学习互动机器人 · 心理画像引擎 · 个人知识库</p>
+        <p class="landing-desc">全自动 AI 学习互动机器人 · 心理画像引擎 · 个人知识库 · 自我进化</p>
         <div class="btn-group">
-            <button id="quickStartBtn" class="btn-large btn-primary">快速开始</button>
-            <a href="https://github.com/xiaoyaya191/bilibili_learning_bot" class="btn-large btn-ghost">GitHub</a>
+            <button id="quickStartBtn" class="btn-large btn-primary"><i class="fa-solid fa-rocket"></i> 快速开始</button>
+            <a href="https://github.com/xiaoyaya191/bilibili_learning_bot" target="_blank" class="btn-large btn-ghost"><i class="fa-brands fa-github"></i> GitHub 仓库</a>
+        </div>
+        <div class="warning-note"><i class="fa-solid fa-circle-info"></i> 学习参考项目 · 请遵守平台规范 · 推荐 dry_run 模式</div>
+    </div>
+
+    <div id="docsPage" class="docs-container">
+        <div class="topbar">
+            <button id="backHomeBtn" class="back-home"><i class="fa-solid fa-arrow-left"></i> 返回首页</button>
+            <a href="https://github.com/xiaoyaya191/bilibili_learning_bot" target="_blank">
+                <img src="https://img.shields.io/github/stars/xiaoyaya191/bilibili_learning_bot?style=flat&label=Stars&color=ff70a6" alt="GitHub Stars">
+            </a>
+        </div>
+        <div class="docs-layout">
+            <aside class="sidebar" id="documentSidebar">
+                <h4>目录导航</h4>
+                <nav class="sidebar-nav">
+                    <a href="#intro"><i class="fa-solid fa-circle-nodes"></i> ✨ 项目简介</a>
+                    <a href="#changelog"><i class="fa-solid fa-clock-rotate-left"></i> 📢 更新日志</a>
+                    <a href="#deploy"><i class="fa-solid fa-terminal"></i> 🚀 部署方式</a>
+                    <a href="#features"><i class="fa-solid fa-sliders"></i> 🤖 核心特性</a>
+                    <a href="#video-modes"><i class="fa-solid fa-photo-film"></i> 🎬 视频理解</a>
+                    <a href="#psycho"><i class="fa-solid fa-brain"></i> 🧠 心理画像</a>
+                    <a href="#knowledge"><i class="fa-solid fa-bookmark"></i> 📚 知识库</a>
+                    <a href="#quickstart"><i class="fa-solid fa-bolt"></i> ⚡ 快速开始</a>
+                    <a href="#advanced"><i class="fa-solid fa-code"></i> ⌨️ 高级能力</a>
+                    <a href="#security"><i class="fa-solid fa-shield-cat"></i> 🔒 安全说明</a>
+                </nav>
+            </aside>
+            <main class="main-content">
+                <section id="intro" class="card">
+                    <h2><i class="fa-solid fa-circle-nodes"></i> 项目简介</h2>
+                    <div class="intro-container">
+                        <div class="intro-main-text">
+                            <p>一个让 AI 全面接管你的 B 站账号的项目。AI 自己刷视频、智能点赞收藏评论、自我学习进化，还能自动回复私信和评论。</p>
+                            <p style="margin-top: 0.8rem;"><strong>完整官方图文教程：</strong><a href="https://bot.bxya.top" target="_blank" style="color:#ff70a6; font-weight: 600; text-decoration: none;"><i class="fa-solid fa-link"></i> bot.bxya.top</a></p>
+                        </div>
+                        <div class="character-card">
+                            <div class="character-avatar"><i class="fa-solid fa-robot"></i></div>
+                            <div class="char-prop"><span>名称:</span>strong>LearningBot</strong></div>
+                            <div class="char-prop"><span>性格:</span><strong>自进化/好奇心强</strong></div>
+                            <div class="char-prop"><span>视频理解能力</span></div>
+                            <div class="char-stat-bar"><div class="char-stat-fill" style="width: 95%;"></div></div>
+                            <div class="char-prop" style="margin-top:0.4rem;"><span>防茧房策略</span></div>
+                            <div class="char-stat-bar"><div class="char-stat-fill" style="width: 88%;"></div></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="changelog" class="card">
+                    <h2><i class="fa-solid fa-clock-rotate-left"></i> 更新日志</h2>
+                    <p style="color: #8c7e8d; font-size: 0.85rem; margin-bottom: 1rem;">自动同步并解析 GitHub Releases 的最新发布记录：</p>
+                    <div class="timeline" id="changelogList">
+                        <div style="color:#8c7e8d; font-size:0.85rem; padding:1rem 0;"><i class="fa-solid fa-spinner fa-spin"></i> 正在同步远程数据源...</div>
+                    </div>
+                </section>
+
+                <section id="deploy" class="card">
+                    <h2><i class="fa-solid fa-terminal"></i> 部署方式</h2>
+                    <div class="deploy-grid">
+                        <div class="deploy-card">
+                            <h4><i class="fa-brands fa-linux"></i> Linux 部署</h4>
+                            <div class="code-block-wrapper">
+                                <div class="code-block">git clone https://github.com/xiaoyaya191/bilibili_learning_bot.git
+cd bilibili_learning_bot
+pip3 install -r requirements.txt
+python3 new_agent.py</div>
+                            </div>
+                        </div>
+                        <div class="deploy-card">
+                            <h4><i class="fa-brands fa-windows"></i> Windows 部署</h4>
+                            <div class="code-block-wrapper">
+                                <div class="code-block">git clone https://github.com/xiaoyaya191/bilibili_learning_bot.git
+cd bilibili_learning_bot
+pip install -r requirements.txt
+python new_agent.py</div>
+                            </div>
+                        </div>
+                        <div class="deploy-card">
+                            <h4 class="android-title"><i class="fa-brands fa-android"></i> Android 部署</h4>
+                            <div class="code-block-wrapper">
+                                <div class="code-block"># 打开 Termux 终端应用
+pkg update && pkg install git python ffmpeg -y
+git clone https://github.com/xiaoyaya191/bilibili_learning_bot.git
+cd bilibili_learning_bot
+pip install -r requirements.txt
+python new_agent.py</div>
+                            </div>
+                        </div>
+                        <div class="deploy-card">
+                            <h4><i class="fa-brands fa-docker"></i> Docker 部署</h4>
+                            <div class="code-block-wrapper">
+                                <div class="code-block">git clone https://github.com/xiaoyaya191/bilibili_learning_bot.git
+cd bilibili_learning_bot
+docker compose up -d</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="features" class="card">
+                    <h2><i class="fa-solid fa-sliders"></i> 核心特性</h2>
+                    <div class="feature-grid">
+                        <div><i class="fa-solid fa-compass"></i><strong>推荐流自主浏览</strong><br>AI评分自动点赞/投币/收藏/评论</div>
+                        <div><i class="fa-solid fa-brain"></i><strong>心理画像引擎</strong><br>五层深度分析，打破信息茧房</div>
+                        <div><i class="fa-solid fa-box-archive"></i><strong>个人知识库</strong><br>自动分类归档，支持回顾复习</div>
+                        <div><i class="fa-solid fa-comments"></i><strong>智能评论&私信</strong><br>多用户独立上下文自动回复</div>
+                    </div>
+                </section>
+
+                <section id="video-modes" class="card">
+                    <h2><i class="fa-solid fa-photo-film"></i> 视频理解模式</h2>
+                    <div class="table-wrapper">
+                        <table>
+                            <thead><tr><th>模式</th><th>原理</th><th>速度</th><th>适用场景</th></tr></thead>
+                            <tbody>
+                                <tr><td>subtitle</td><td>标题+简介+字幕+评论</td><td>⚡ 极快</td><td>知识类视频</td></tr>
+                                <tr><td>frames</td><td>ffmpeg抽帧+视觉模型</td><td>🐢 较慢</td><td>教程/演示</td></tr>
+                                <tr><td>hybrid</td><td>字幕+抽帧综合分析</td><td>🐢 慢</td><td>全面理解</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="psycho" class="card">
+                    <h2><i class="fa-solid fa-brain"></i> 心理画像引擎</h2>
+                    <p>通过 L1表层兴趣 到 L5演变趋势 五层递进模型进行分析。自动生成惊喜探索和趋势推荐内容，杜绝枯燥重复的单一推送。</p>
+                </section>
+
+                <section id="knowledge" class="card">
+                    <h2><i class="fa-solid fa-bookmark"></i> 知识库系统</h2>
+                    <p>视频评分超过预期设定后自动分类归档，并可触发知识验证与联网搜索，帮你一键整理出专属的高价值资料。按 <kbd>O</kbd> 可一键自动重构整理。</p>
+                </section>
+
+                <section id="quickstart" class="card">
+                    <h2><i class="fa-solid fa-bolt"></i> 快速开始</h2>
+                    <div class="code-block-wrapper">
+                        <div class="code-block">{
+  "api": {
+    "unified_api_key": "sk-你的APIKey",
+    "unified_base_url": "https://api.openai.com/v1"
+  }
+}</div>
+                    </div>
+                    <p>修改完配置后，通过 <code>python web_panel.py</code> 即可在网页端扫码登录与实时观测。</p>
+                </section>
+
+                <section id="advanced" class="card">
+                    <h2><i class="fa-solid fa-code"></i> 高级控制面板能力</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap:0.6rem;">
+                        <div><kbd>9</kbd> Agent 技能配置</div><div><kbd>V</kbd> 手动单视频分析</div>
+                        <div><kbd>K</kbd> 知识库库重温</div><div><kbd>M</kbd> 机器人心情管理</div>
+                    </div>
+                </section>
+
+                <section id="security" class="card">
+                    <h2><i class="fa-solid fa-shield-cat"></i> 安全说明与规范</h2>
+                    <p>切勿将 <code>Data/config.json</code> 以及 <code>Data/bilibili_cookies.json</code> 分享给他人。开启干运行能够完美在不留下真实点赞记录的情况下调试 AI 的逻辑状态。</p>
+                </section>
+
+                <div class="footer">
+                    <p>📄 MIT License · 仅供学习参考 · 作者: xiaoyaya191 · 交流群: 1056941856</p>
+                    <div class="badge-link-group">
+                        <a href="https://github.com/xiaoyaya191/bilibili_learning_bot" target="_blank" class="badge-link-item"><i class="fa-brands fa-github"></i> GitHub</a>
+                        <a href="https://www.travellings.cn/go.html" target="_blank" class="badge-link-item"><i class="fa-solid fa-train-subway"></i> 开往·友链</a>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
+
+    <button id="backToSidebarBtn" class="back-to-sidebar-btn" title="回到目录"><i class="fa-solid fa-arrow-up"></i></button>
+
     <script>
-        document.getElementById("quickStartBtn").onclick = function() { window.location.href = "https://github.com/xiaoyaya191/bilibili_learning_bot"; };
+        const landing = document.getElementById('landingPage');
+        const docs = document.getElementById('docsPage');
+        const quickBtn = document.getElementById('quickStartBtn');
+        const backBtn = document.getElementById('backHomeBtn');
+        const backToSidebarBtn = document.getElementById('backToSidebarBtn');
+        const sidebar = document.getElementById('documentSidebar');
+
+        function showDocs() {
+            landing.style.display = 'none';
+            docs.style.display = 'block';
+            window.scrollTo({ top: 0 });
+            updateActiveLink();
+            toggleFloatBtn();
+            fetchGitHubReleases(); 
+        }
+        function showLanding() {
+            landing.style.display = 'flex';
+            docs.style.display = 'none';
+            backToSidebarBtn.classList.remove('show');
+        }
+        quickBtn.addEventListener('click', showDocs);
+        backBtn.addEventListener('click', showLanding);
+
+        function toggleFloatBtn() {
+            if (docs.style.display === 'block' && window.scrollY > 300) {
+                backToSidebarBtn.classList.add('show');
+            } else {
+                backToSidebarBtn.classList.remove('show');
+            }
+        }
+
+        backToSidebarBtn.addEventListener('click', () => {
+            if (sidebar) {
+                sidebar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+
+        const links = document.querySelectorAll('.sidebar-nav a');
+        const sections = ['intro', 'changelog', 'deploy', 'features', 'video-modes', 'psycho', 'knowledge', 'quickstart', 'advanced', 'security'];
+        function updateActiveLink() {
+            let current = '';
+            for (let id of sections) {
+                const el = document.getElementById(id);
+                if (el) {
+                    const rect = el.getBoundingClientRect();
+                    if (rect.top <= 120 && rect.bottom >= 120) { current = id; break; }
+                }
+            }
+            links.forEach(link => {
+                const href = link.getAttribute('href').substring(1);
+                if (href === current) link.classList.add('active');
+                else link.classList.remove('active');
+            });
+        }
+        
+        window.addEventListener('scroll', () => { 
+            if (docs.style.display === 'block') {
+                updateActiveLink(); 
+                toggleFloatBtn();
+            } 
+        });
+
+        links.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const id = link.getAttribute('href').substring(1);
+                const target = document.getElementById(id);
+                if (target) {
+                    const offset = 40;
+                    const bodyRect = document.body.getBoundingClientRect().top;
+                    const elementRect = target.getBoundingClientRect().top;
+                    const elementPosition = elementRect - bodyRect;
+                    const offsetPosition = elementPosition - offset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        function fetchGitHubReleases() {
+            const container = document.getElementById('changelogList');
+            const repo = "xiaoyaya191/bilibili_learning_bot";
+            
+            fetch(`https://api.github.com/repos/${repo}/releases`)
+                .then(res => {
+                    if (!res.ok) throw new Error('网络请求异常');
+                    return res.json();
+                })
+                .then(data => {
+                    if (!data || data.length === 0) {
+                        container.innerHTML = '<div style="color:#8c7e8d; font-size:0.85rem;">暂无公开的 Release 记录。</div>';
+                        return;
+                    }
+                    
+                    container.innerHTML = ''; 
+                    
+                    data.forEach((release, index) => {
+                        const item = document.createElement('div');
+                        item.className = index === 0 ? 'timeline-item latest active' : 'timeline-item';
+                        
+                        let mdHtml = release.body
+                            .replace(/###\s+(.*)/g, '<h3>$1</h3>')
+                            .replace(/##\s+(.*)/g, '<h3>$1</h3>')
+                            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                            .replace(/^\s*[\-\*]\s+(.*)/gm, '<li>$1</li>')
+                            .replace(/`(.*?)`/g, '<code>$1</code>')
+                            .replace(/^\>\s+(.*)/gm, '<blockquote>$1</blockquote>')
+                            .replace(/\n/g, '<br>');
+
+                        mdHtml = mdHtml.replace(/(<li>.*?<\/li>)/gs, '<ul>$1</ul>');
+                        mdHtml = mdHtml.replace(/(<br>\s*){2,}/g, '<br>');
+
+                        const pubDate = new Date(release.published_at);
+                        const dateString = `${pubDate.getFullYear()}-${String(pubDate.getMonth() + 1).padStart(2,'0')}-${String(pubDate.getDate()).padStart(2,'0')}`;
+
+                        item.innerHTML = `
+                            <div class="timeline-toggle-header">
+                                <div class="timeline-header-left">
+                                    <span class="version-tag">${release.name || release.tag_name}</span>
+                                    ${index === 0 ? '<span class="badge-latest">Latest</span>' : ''}
+                                    <span class="version-date">${dateString}</span>
+                                </div>
+                                <div class="fold-icon"><i class="fa-solid fa-chevron-down"></i></div>
+                            </div>
+                            <div class="changelog-body-wrapper">
+                                <div class="changelog-detail">
+                                    ${mdHtml}
+                                </div>
+                            </div>
+                        `;
+
+                        const toggleHeader = item.querySelector('.timeline-toggle-header');
+                        toggleHeader.addEventListener('click', () => {
+                            item.classList.toggle('active');
+                            const icon = item.querySelector('.fold-icon i');
+                            if(item.classList.contains('active')) {
+                                icon.className = "fa-solid fa-chevron-up";
+                            } else {
+                                icon.className = "fa-solid fa-chevron-down";
+                            }
+                        });
+
+                        container.appendChild(item);
+                    });
+                })
+                .catch(err => {
+                    console.error('拉取更新日志失败：', err);
+                    container.innerHTML = '<div style="color:#ef4444; font-size:0.85rem;"><i class="fa-solid fa-circle-exclamation"></i> 无法连接至 GitHub API，请稍后刷新重试。</div>';
+                });
+        }
+
+        document.querySelectorAll('.code-block-wrapper').forEach(wrapper => {
+            const codeBlock = wrapper.querySelector('.code-block');
+            if (!codeBlock) return;
+
+            const btn = document.createElement('button');
+            btn.className = 'copy-btn';
+            btn.innerHTML = '复制';
+
+            btn.addEventListener('click', () => {
+                const text = codeBlock.innerText;
+                navigator.clipboard.writeText(text).then(() => {
+                    btn.innerHTML = '已复制';
+                    setTimeout(() => { btn.innerHTML = '复制'; }, 2000);
+                });
+            });
+            wrapper.appendChild(btn);
+        });
+
+        if (window.location.hash && window.location.hash.length > 1) showDocs();
     </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a14a09990d058389',t:'MTc4Mjk1NzQyMw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
